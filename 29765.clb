@@ -1,0 +1,110 @@
+= V5 MultiLine NoSorting TabWidth=30
+
+H="n Dictionary Lookup when reading a txt of file in NoteTab"
+
+^!Select +1
+^!Select WORDs
+^!Set %selsiz%=^$GetSelSize$
+^!If ^%selsiz%=0 NoSelection
+^!Set %selection%=^$GetSelection$
+^!Set %target%=^$StrUpper(^%selection%)$
+^!Set %work%=^%target%
+^!Set %siz%=^$StrSize(^%target%)$
+^!If ^%siz%>2 StartSearch
+^!Set %target%=^P^%target%
+^!If ^%siz%>1 StartSearch
+^!Set %target%=^%target%^P
+^!Goto StartSearch
+:NoSelection
+^!Prompt There is no word to look up, terminating
+^!Goto Endjob
+:StartSearch
+^!Open "C:\Documents and Settings\user\My Documents\Webster1913\Webster1913.txt"
+^!Jump TEXT_START
+:ReFind
+^!Find ^%target% CS
+^!If ^$GetSelSize$=0 SearchWordNet
+^!Select 0
+^!MoveCursor +2
+^!Select LINE
+^!Select -1
+^!Set %selection%=^$GetSelection$
+^!MoveCursor +1
+^!If ^%selection%<>^%work% ReFind
+^!Set %row%=^$GetRow$
+^!Keyboard PAGEDOWN
+^!SetCursor ^%row%:1
+^!Select WORD
+^!Goto Endjob
+:NoWordNet
+^!Prompt WordNet not found.  See Readme.txt for more details.  Press Enter to terminate.
+^!Goto Endjob
+:SearchWordNet
+^!FocusApp "WordNet*"
+^!IfError StartWordNet
+^!Keyboard ALT+F4
+:StartWordNet
+^!ChDir "C:\Program Files\WordNet\2.1\bin\"
+^!Shell "wnb.exe"
+^!Delay 50
+^!SetClipboard ^%work%
+^!FocusApp "WordNet*"
+^!IfError NoWordNet
+^!Keyboard CTRL+V &3000
+^!Keyboard ENTER
+:Endjob
+
+H="p Dictionary Lookup when NOT reading a txt file in NoteTab"
+
+^!Set %selsiz%=^$GetClipboardSize$
+^!If ^%selsiz%=0 NoSelection
+^!If ^%selsiz%>25 NoSelection
+^!Set %selection%=^$GetClipboard$
+^!Set %target%=^$StrUpper(^%selection%)$
+^!Set %work%=^%target%
+^!Set %siz%=^$StrSize(^%target%)$
+^!If ^%siz%>2 StartSearch
+^!Set %target%=^P^%target%
+^!If ^%siz%>1 StartSearch
+^!Set %target%=^%target%^P
+^!Goto StartSearch
+:NoSelection
+^!Prompt Clipboard is either empty or too big, terminating
+^!Goto Endjob
+:StartSearch
+^!Open "C:\Documents and Settings\user\My Documents\Webster1913\Webster1913.txt"
+^!Jump TEXT_START
+:ReFind
+^!Find ^%target% CS
+^!If ^$GetSelSize$=0 SearchWordNet
+^!Select 0
+^!MoveCursor +2
+^!Select LINE
+^!Select -1
+^!Set %selection%=^$GetSelection$
+^!MoveCursor +1
+^!If ^%selection%<>^%work% ReFind
+^!Set %row%=^$GetRow$
+^!Keyboard PAGEDOWN
+^!SetCursor ^%row%:1
+^!Select WORD
+^!Goto Endjob
+:NoWordNet
+^!Prompt WordNet not found.  See Readme.txt for more details.  Press Enter to terminate.
+^!Goto Endjob
+:SearchWordNet
+^!FocusApp "WordNet*"
+^!IfError StartWordNet
+^!Keyboard ALT+F4
+:StartWordNet
+^!ChDir "C:\Program Files\WordNet\2.1\bin\"
+^!Shell "wnb.exe"
+^!Delay 50
+^!SetClipboard ^work%
+^!FocusApp "WordNet*"
+^!IfError NoWordNet
+^!Keyboard CTRL+V &3000
+^!Keyboard ENTER
+:Endjob
+
+
